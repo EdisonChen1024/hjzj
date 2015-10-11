@@ -86,17 +86,21 @@ var HelloWorldLayer = cc.Layer.extend({
             "Clouds_5",
             "Sky_6",
             "floor",
+            "not_exist",
         ];
         for (var i = 0; i < layers.length; i++)
         {
             var layer_name = layers[i];
-            cc.log("获取层==>" + layer_name);
             var ObjectGroups = map.getObjectGroup(layer_name);
             if (ObjectGroups == null)
             { 
                 cc.log("============================================");
                 cc.log("找不到指定层==>" + layer_name);
                 cc.log("============================================");
+            }
+            else
+            {
+                cc.log("成功获取层==>" + layer_name);
             }
         }
         // 配置
@@ -211,10 +215,7 @@ var HelloWorldLayer = cc.Layer.extend({
         function initMonsterInfo()
         {
             var ObjectGroups = map.getObjectGroup("monster");
-            cc.log("===============")
-            cc.log(ObjectGroups);
-            cc.log(ObjectGroups == null);
-            if (ObjectGroups == null);
+            if (ObjectGroups == null)
             {
                 cc.log("============================================");
                 cc.log("==== initMonsterInfo 找不到 怪物层==========");
