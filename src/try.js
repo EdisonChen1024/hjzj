@@ -378,3 +378,101 @@ var cache = cc.spriteFrameCache
             self.sprite.runAction(seq.repeatForever());
         }
         createView(this);
+
+--------------------------------------------------------------------------------
+-- res\Model 用法
+--------------------------------------------------------------------------------
+骨骼动画的json解码后:
+bones   table: 0024B798
+events  table: 0033AFD0
+skins   table: 00335A78
+slots   table: 0024F7B0
+animations  table: 003375D8
+用如下代码打印骨骼动画的成员(每个动画不一样)
+// local t = json.decode(str)
+// print("events  8=======>")
+// Help.print_k_v(t.events)
+// print("skins  8=======>")
+// Help.print_k_v(t.skins)
+// print("animations  8=======>")
+// Help.print_k_v(t.animations)
+一般有:
+events     : attack_1 attack_2 attack_3
+skins      : default
+animations : attack_1 attack_2 attack_3 dead_1 dead_2 idle_1 debut_1
+
+ cc.log("start:骨骼动画   8===============>");
+        // var path = "res/Model/Monster/b001/"
+        // var skeletonNode = new sp.SkeletonAnimation(path + "model.json", path + "model.atlas", 1);
+        // var animations = ["attack_1", "attack_2", "attack_3", "dead_1", "dead_2", "idle_1", "debut_1"];
+        // var events     = ["attack_1", "attack_2", "attack_3"];
+        // var skins      = ["default"];
+        var path = "res/Model/Monster/b005/"
+        var skeletonNode = new sp.SkeletonAnimation(path + "model.json", path + "model.atlas", 1);
+        var animations = ["attack_1", "attack_2", "attack_3", "dead_1", "dead_2", "idle_1", "walk_1", "debut_1", "attack_5"];
+        var events     = ["attack_1", "attack_2", "attack_3"];
+        var skins      = ["default"];
+
+        var index = 0
+        skeletonNode.setAnimation(0, animations[index], true);
+        // skeletonNode.setSkin(skins[0]);
+        // skeletonNode.setScale(0.5);
+        // skeletonNode.setAnchorPoint(0.5, 0.5)
+        // skeletonNode.setPosition(winSize.width / 2, winSize.height / 2);
+        skeletonNode.setPosition(winSize.width / 2, 0);
+        this.addChild(skeletonNode);
+        cc.log("end:骨骼动画     8===============>");
+        if ('keyboard' in cc.sys.capabilities) 
+        {
+            cc.eventManager.addListener({
+                event: cc.EventListener.KEYBOARD,
+                onKeyPressed: function (key, event) {
+                    var strTemp = "Key down:" + key;
+                    var keyStr = self.getKeyStr(key);
+                    if (keyStr.length > 0)
+                    {
+                        strTemp += " the key name is:" + keyStr;
+                    }
+                    cc.log(strTemp);
+                    index = index + 1;
+                    if (index >= animations.length)
+                    {
+                        index = 0
+                    }
+                    cc.log("setAnimation:" + animations[index])
+                    skeletonNode.setAnimation(0, animations[index], true);
+                },
+                onKeyReleased: function (key, event) {
+                    var strTemp = "Key up:" + key;
+                    var keyStr = self.getKeyStr(key);
+                    if (keyStr.length > 0)
+                    {
+                        strTemp += " the key name is:" + keyStr;
+                    }
+                    cc.log(strTemp);
+                }
+            }, this);
+        } 
+        else 
+        {
+            cc.log("KEYBOARD Not supported");
+        }
+    return true;
+    },
+    getKeyStr : function (keycode)
+    {
+        if (keycode == cc.KEY.none)
+        {
+            return "";
+        }
+
+        for (var keyTemp in cc.KEY)
+        {
+            if (cc.KEY[keyTemp] == keycode)
+            {
+                return keyTemp;
+            }
+        }
+        return "";
+    },
+    

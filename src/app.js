@@ -10,7 +10,7 @@ var HelloWorldLayer = cc.Layer.extend({
         // // 2. add a menu item with "X" image, which is clicked to quit the program
         // //    you may modify it.
         // // ask the window size
-        // var size = cc.winSize;
+        var size = cc.winSize;
 
         // /////////////////////////////
         // // 3. add your codes below+.
@@ -23,22 +23,24 @@ var HelloWorldLayer = cc.Layer.extend({
         // // add the label as a child to this layer
         // this.addChild(helloLabel, 5);
 
-        // // add "HelloWorld" splash screen"
+        // add "HelloWorld" splash screen"
+        this.sprite = new cc.Sprite("res/UI/biaozhundikuang.png");
+        this.sprite.attr({
+            x: size.width / 2,
+            y: size.height / 2
+        });
+        this.addChild(this.sprite, 0);
+        cc.log("start 8===============>");
+        var size = cc.winSize;
+        var winSize = cc.winSize;
+        var self = this;
+        // 创建一个精灵执行action
         // this.sprite = new cc.Sprite(res.HelloWorld_png);
         // this.sprite.attr({
         //     x: size.width / 2,
         //     y: size.height / 2
         // });
         // this.addChild(this.sprite, 0);
-        cc.log("start 8===============>");
-        var size = cc.winSize;
-        // 创建一个精灵执行action
-        this.sprite = new cc.Sprite(res.HelloWorld_png);
-        this.sprite.attr({
-            x: size.width / 2,
-            y: size.height / 2
-        });
-        this.addChild(this.sprite, 0);
         // maps
         var TAG_TILE_MAP = 1;
         // var map = new cc.TMXTiledMap("res/maps/1201.tmx", "res/maps/Res");
@@ -259,9 +261,88 @@ var HelloWorldLayer = cc.Layer.extend({
         // cc.log(0, 0);
         // map.runAction(cc.moveTo(1.0, cc.p(-ms.width * ts.width / 2, -ms.height * ts.height / 2)));
         cc.log("end   8===============>");
+        var ui = ccs.load("res/UI/tip.json");
+        cc.log(ui.action);
+        cc.log(ui.node);
+        var node = ui.node;
+        node.setAnchorPoint(0, 0);
+        node.setPosition(0, 0);
+        node.setScale(0.5);
+        this.addChild(ui.node);
+        cc.log("start:骨骼动画   8===============>");
+        // var path = "res/Model/Monster/b001/"
+        // var skeletonNode = new sp.SkeletonAnimation(path + "model.json", path + "model.atlas", 1);
+        // var animations = ["attack_1", "attack_2", "attack_3", "dead_1", "dead_2", "idle_1", "debut_1"];
+        // var events     = ["attack_1", "attack_2", "attack_3"];
+        // var skins      = ["default"];
+        var path = "res/Model/Monster/b005/"
+        var skeletonNode = new sp.SkeletonAnimation(path + "model.json", path + "model.atlas", 1);
+        var animations = ["attack_1", "attack_2", "attack_3", "dead_1", "dead_2", "idle_1", "walk_1", "debut_1", "attack_5"];
+        var events     = ["attack_1", "attack_2", "attack_3"];
+        var skins      = ["default"];
 
-        return true;
-    }
+        var index = 0
+        skeletonNode.setAnimation(0, animations[index], true);
+        // skeletonNode.setSkin(skins[0]);
+        // skeletonNode.setScale(0.5);
+        // skeletonNode.setAnchorPoint(0.5, 0.5)
+        // skeletonNode.setPosition(winSize.width / 2, winSize.height / 2);
+        skeletonNode.setPosition(winSize.width / 2, 0);
+        this.addChild(skeletonNode);
+        cc.log("end:骨骼动画     8===============>");
+        if ('keyboard' in cc.sys.capabilities) 
+        {
+            cc.eventManager.addListener({
+                event: cc.EventListener.KEYBOARD,
+                onKeyPressed: function (key, event) {
+                    var strTemp = "Key down:" + key;
+                    var keyStr = self.getKeyStr(key);
+                    if (keyStr.length > 0)
+                    {
+                        strTemp += " the key name is:" + keyStr;
+                    }
+                    cc.log(strTemp);
+                    index = index + 1;
+                    if (index >= animations.length)
+                    {
+                        index = 0
+                    }
+                    cc.log("setAnimation:" + animations[index])
+                    skeletonNode.setAnimation(0, animations[index], true);
+                },
+                onKeyReleased: function (key, event) {
+                    var strTemp = "Key up:" + key;
+                    var keyStr = self.getKeyStr(key);
+                    if (keyStr.length > 0)
+                    {
+                        strTemp += " the key name is:" + keyStr;
+                    }
+                    cc.log(strTemp);
+                }
+            }, this);
+        } 
+        else 
+        {
+            cc.log("KEYBOARD Not supported");
+        }
+    return true;
+    },
+    getKeyStr : function (keycode)
+    {
+        if (keycode == cc.KEY.none)
+        {
+            return "";
+        }
+
+        for (var keyTemp in cc.KEY)
+        {
+            if (cc.KEY[keyTemp] == keycode)
+            {
+                return keyTemp;
+            }
+        }
+        return "";
+    },
 });
 
 var HelloWorldScene = cc.Scene.extend({
